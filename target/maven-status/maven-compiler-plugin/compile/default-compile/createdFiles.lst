@@ -1,1 +1,8 @@
-com\example\Main.class
+UI\BoardView.class
+UI\MainApp.class
+Algorithms\Algorithm.class
+Model\NQueensBoard.class
+UI\SolverWindow.class
+Listeners\StepListener.class
+Algorithms\Soduku.class
+Algorithms\NQueens.class
