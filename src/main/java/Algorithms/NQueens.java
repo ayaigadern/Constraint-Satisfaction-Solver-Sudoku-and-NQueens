@@ -2,6 +2,7 @@ package Algorithms;
 
 import Listeners.StepListener;
 import Model.NQueensBoard;
+import javafx.application.Platform;
 
 public class NQueens implements Algorithm {
 
@@ -32,11 +33,17 @@ public class NQueens implements Algorithm {
 
     // Backtracking solver
     private boolean solve(int row) {
+        if (Thread.currentThread().isInterrupted()) {
+            return false; // stop immediately if thread was interrupted
+        }
+
         if (row == N) {
             return true;
         }
 
         for (int col = 0; col < N; col++) {
+            if (Thread.currentThread().isInterrupted()) return false;
+
             if (isSafe(row, col)) {
                 board.setQueenPosition(row, col);
                 notifyStep(row, col, false);
@@ -52,6 +59,7 @@ public class NQueens implements Algorithm {
         return false;
     }
 
+
     // Check if placing a queen is safe
     private boolean isSafe(int row, int col) {
         for (int i = 0; i < row; i++) {
@@ -64,14 +72,15 @@ public class NQueens implements Algorithm {
     // Notify UI about each step
     private void notifyStep(int row, int col, boolean isBacktracking) {
         if (listener != null) {
-            listener.onStep(row, col, isBacktracking ? 0 : 1, isBacktracking);
+            Platform.runLater(() -> listener.onStep(row, col, isBacktracking ? 0 : 1, isBacktracking));
         }
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            Thread.currentThread().interrupt(); // preserve interrupt status
         }
     }
+
 
     public NQueensBoard getBoard() {
         return board;

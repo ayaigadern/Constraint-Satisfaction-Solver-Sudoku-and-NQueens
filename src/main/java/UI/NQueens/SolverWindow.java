@@ -146,20 +146,23 @@ public class SolverWindow extends Stage {
     private void resetSolver(TextField sizeInput, VBox boardContainer, Label messageLabel) {
         if (solverThread != null && solverThread.isAlive()) {
             solverThread.interrupt();
+            try {
+                solverThread.join(); // wait for the old thread to finish
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
 
         solver = new NQueens(8);
-        boardView = new BoardView(solver.getBoard());
-        solver.setStepListener(boardView);
+        solver.setStepListener(boardView = new BoardView(solver.getBoard()));
 
-        boardContainer.getChildren().clear();
-        boardContainer.getChildren().add(boardView);
-
+        boardContainer.getChildren().setAll(boardView);
         sizeInput.setText("8");
         messageLabel.setText("");
 
         Platform.runLater(() -> adjustWindowSize(boardView.getBoardSize(), 8));
     }
+
 
     private void adjustWindowSize(double boardSize, int N) {
         double extraHeight = 190;

@@ -49,7 +49,7 @@ public class BoardView extends GridPane {
                 Rectangle rect = new Rectangle(CELL_SIZE, CELL_SIZE);
                 rect.setFill(getCellBackgroundColor(row, col));
                 rect.setStroke(Color.GRAY);
-                rect.setStrokeWidth(0.5);
+                rect.setStrokeWidth(0.3);
 
                 // Add thicker borders for 3x3 boxes
                 if (col % 3 == 0 && col != 0) {

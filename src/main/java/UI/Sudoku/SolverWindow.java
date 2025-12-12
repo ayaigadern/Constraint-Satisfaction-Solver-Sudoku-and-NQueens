@@ -27,6 +27,7 @@ public class SolverWindow extends Stage {
     private Thread solverThread;
     private int speed = 20;
     private SudokuBoard sudokuBoard;
+    private volatile boolean solverActive = false;
 
     public SolverWindow() {
 
@@ -96,7 +97,7 @@ public class SolverWindow extends Stage {
 
         // --- Actions ---
         startBtn.setOnAction(e -> {
-            if (solverThread != null && solverThread.isAlive()) {
+            if (solverActive) {
                 statusLabel.setText("Solver is already running!");
                 statusLabel.setTextFill(Color.ORANGE);
             } else {
@@ -104,51 +105,9 @@ public class SolverWindow extends Stage {
             }
         });
 
-        resetBtn.setOnAction(e -> {
-            if (solverThread != null && solverThread.isAlive()) {
-                solverThread.interrupt();
-                try {
-                    // Wait for the thread to actually stop
-                    solverThread.join(1000); // Wait up to 1 second
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            // Clear the status label
-            statusLabel.setText("");
-            statusLabel.setTextFill(Color.web("#D0D6B3"));
-            
-            // Keep the same puzzle but reset to initial state
-            boardContainer.getChildren().clear();
-            for (int r = 0; r < 9; r++) {
-                for (int c = 0; c < 9; c++) {
-                    SudokuCell cell = sudokuBoard.getCell(r, c);
-                    if (!cell.isFixed()) {
-                        cell.setValue(0);
-                        cell.setState(SudokuCellState.DEFAULT);
-                    }
-                }
-            }
-            boardView = new BoardView(sudokuBoard);
-            boardContainer.getChildren().add(boardView);
-        });
+        resetBtn.setOnAction(e -> stopSolverAndReset(boardContainer, statusLabel));
 
-        newPuzzleBtn.setOnAction(e -> {
-            if (solverThread != null && solverThread.isAlive()) {
-                solverThread.interrupt();
-                try {
-                    // Wait for the thread to actually stop
-                    solverThread.join(1000); // Wait up to 1 second
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            // Clear the status label
-            statusLabel.setText("");
-            statusLabel.setTextFill(Color.web("#D0D6B3"));
-            
-            generateNewPuzzle(boardContainer);
-        });
+        newPuzzleBtn.setOnAction(e -> stopSolverAndNewPuzzle(boardContainer, statusLabel));
 
         speedSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             speed = newVal.intValue();
@@ -170,6 +129,8 @@ public class SolverWindow extends Stage {
     }
 
     private void startSolver(Label statusLabel) {
+        solverActive = true;
+
         statusLabel.setText("Solving...");
         statusLabel.setTextFill(Color.web("#D0D6B3"));
 
@@ -178,21 +139,66 @@ public class SolverWindow extends Stage {
 
         solverThread = new Thread(() -> {
             solver.run();
-            Platform.runLater(() -> {
-                if (solver.isSolvable()) {
-                    statusLabel.setText("Solved!");
-                    statusLabel.setTextFill(Color.web("#229954")); // Green
-                } else {
-                    statusLabel.setText("No solution exists!");
-                    statusLabel.setTextFill(Color.web("#A93226")); // Red
-                }
-            });
+
+            if (solverActive) { // Only update UI if solver wasn't interrupted
+                Platform.runLater(() -> {
+                    if (solver.isSolvable()) {
+                        statusLabel.setText("Solved!");
+                        statusLabel.setTextFill(Color.web("#229954")); // Green
+                    } else {
+                        statusLabel.setText("No solution exists!");
+                        statusLabel.setTextFill(Color.web("#A93226")); // Red
+                    }
+                });
+            }
+            solverActive = false;
         });
         solverThread.start();
     }
 
-    private void generateNewPuzzle(VBox boardContainer) {
-        sudokuBoard = new SudokuBoard(null);
+    private void stopSolverAndReset(VBox boardContainer, Label statusLabel) {
+        if (solverThread != null && solverThread.isAlive()) {
+            solverActive = false;
+            solverThread.interrupt();
+            try {
+                solverThread.join(1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        statusLabel.setText("");
+        statusLabel.setTextFill(Color.web("#D0D6B3"));
+
+        boardContainer.getChildren().clear();
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                SudokuCell cell = sudokuBoard.getCell(r, c);
+                if (!cell.isFixed()) {
+                    cell.setValue(0);
+                    cell.setState(SudokuCellState.DEFAULT);
+                }
+            }
+        }
+        boardView = new BoardView(sudokuBoard);
+        boardContainer.getChildren().add(boardView);
+    }
+
+    private void stopSolverAndNewPuzzle(VBox boardContainer, Label statusLabel) {
+        if (solverThread != null && solverThread.isAlive()) {
+            solverActive = false;
+            solverThread.interrupt();
+            try {
+                solverThread.join(1000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        statusLabel.setText("");
+        statusLabel.setTextFill(Color.web("#D0D6B3"));
+
+        sudokuBoard = new SudokuBoard(null); // generate new puzzle
         boardView = new BoardView(sudokuBoard);
 
         boardContainer.getChildren().clear();
