@@ -1,4 +1,4 @@
-package UI;
+package UI.NQueens;
 import Listeners.StepListener;
 import Model.NQueensBoard;
 import javafx.application.Platform;

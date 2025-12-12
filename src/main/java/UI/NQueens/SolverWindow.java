@@ -1,4 +1,4 @@
-package UI;
+package UI.NQueens;
 import Algorithms.NQueens;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
