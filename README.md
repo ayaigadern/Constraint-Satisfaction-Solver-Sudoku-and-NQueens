@@ -1,25 +1,4 @@
 # Constraint Satisfaction Solver — Sudoku & N-Queens
-
-<<<<<<< HEAD
-Java/Maven project demonstrating **backtracking-based constraint satisfaction solvers**
-for **Sudoku** and **N-Queens**.
-
-## Features
-- Sudoku solver (9×9)
-- N-Queens solver (configurable N)
-- Classical backtracking with constraint checking
-- Listener-based step observation
-- Solver logic independent of UI
-
-## Requirements
-- Java 11+
-- Maven 3.6+
-
-## Build
-```bash
-mvn clean package
-mvn javafx:run
-=======
 A Java/JavaFX application that demonstrates constraint-satisfaction solvers implemented with backtracking. The project provides two visual solvers:
 
 - Sudoku: generates a puzzle and solves it step-by-step, visualizing attempts and conflicts.
@@ -85,10 +64,3 @@ This uses the configured `javafx-maven-plugin` with `UI.MainApp` as the main cla
 - `src/main/java/Model/Sudoku/SudokuCellState.java` — cell states used for visualization.
 - `src/main/java/UI/MainApp.java` — application entry; opens solver windows.
 - `src/main/java/UI/Sudoku/*` and `src/main/java/UI/NQueens/*` — solver windows and board views.
-
-**Notes & suggestions**
-
-- Tweak solver delays via `setDelay(...)` in `Algorithms.Sudoku` and `Algorithms.NQueens` for faster/slower visualization.
-- The Sudoku generator uses a randomized fill + removal strategy; puzzles may vary in difficulty.
-- Some classes print debug output (e.g., `System.out.println` in `Algorithms.Sudoku`) — these can be removed or replaced by a logger.
->>>>>>> 4bca284 (Update README file)
