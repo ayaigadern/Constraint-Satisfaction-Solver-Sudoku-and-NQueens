@@ -24,7 +24,7 @@ Watch the solver in action:
 <div align="center">
     <table>
         <tr>
-            <td><img src="src/main/resources/vid.gif" width="800"/></td>
+            <td><img src="src/main/resources/vid.gif"/></td>
         </tr>
         <tr>
             <td>UI Showcase</td>
