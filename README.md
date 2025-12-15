@@ -21,9 +21,16 @@ A Java/JavaFX application that demonstrates constraint-satisfaction solvers impl
 
 Watch the solver in action:
 
-
-![Solver Demo](https://raw.githubusercontent.com/ayaigadern/Constraint-Satisfaction-Solver-Sudoku-and-NQueens/main/resources/vid.gif)
-
+<div align="center">
+    <table>
+        <tr>
+            <td><img src="src/main/resources/vid.gif" width="800"/></td>
+        </tr>
+        <tr>
+            <td>UI Showcase</td>
+        </tr>
+    </table>
+</div>
 
 
 - Both solvers use classical backtracking algorithms:
